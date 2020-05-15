@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SDWebImage
 
 class NextViewController: UIViewController,UITableViewDelegate,UITableViewDataSource {
 
@@ -43,11 +44,11 @@ class NextViewController: UIViewController,UITableViewDelegate,UITableViewDataSo
             userImage = UIImage(data: userImageData)!
         }
         
-        //セルの高さを自動に設定する
-        timeLineTableView.rowHeight = UITableView.automaticDimension
-
-        //デフォルトのセルの高さを設定する
-        timeLineTableView.estimatedRowHeight = 10
+//        //セルの高さを自動に設定する
+//        timeLineTableView.rowHeight = UITableView.automaticDimension
+//
+//        //デフォルトのセルの高さを設定する
+//        timeLineTableView.estimatedRowHeight = 10
         
     }
     
@@ -63,7 +64,27 @@ class NextViewController: UIViewController,UITableViewDelegate,UITableViewDataSo
         //セルを取得する
         let cell = timeLineTableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         
+        //コンテンツの表示
+        //userNameString
+        let userNameLabel = cell.viewWithTag(1) as! UILabel
+        userNameLabel.text = contentsArray[indexPath.row].userNameString
         
+        //profileImage
+        let profileImageView = cell.viewWithTag(2) as! UIImageView
+        profileImageView.sd_setImage(with: URL(string: contentsArray[indexPath.row].profileImage), completed: nil)
+        profileImageView.layer.cornerRadius = 20
+        
+        //contentImageString
+        let contentImageView = cell.viewWithTag(3) as! UIImageView
+        contentImageView.sd_setImage(with: URL(string: contentsArray[indexPath.row].contentImageString), completed: nil)
+        
+        //commentString
+        let commentLabel = cell.viewWithTag(4) as! UILabel
+        commentLabel.text = contentsArray[indexPath.row].commentString
+        
+        //postDataString
+        let postDataLabel = cell.viewWithTag(5) as! UILabel
+        postDataLabel.text = contentsArray[indexPath.row].postDataString
         
         return cell
     }
@@ -72,4 +93,10 @@ class NextViewController: UIViewController,UITableViewDelegate,UITableViewDataSo
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
+    
+    //セルの高さを決めるメソッド
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+             return 605
+    }
+    
 }
