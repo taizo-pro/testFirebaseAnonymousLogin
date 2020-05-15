@@ -8,8 +8,9 @@
 
 import UIKit
 import SDWebImage
+import Photos
 
-class NextViewController: UIViewController,UITableViewDelegate,UITableViewDataSource {
+class NextViewController: UIViewController,UITableViewDelegate,UITableViewDataSource,UIImagePickerControllerDelegate,UINavigationControllerDelegate {
 
     @IBOutlet weak var timeLineTableView: UITableView!
     @IBOutlet weak var cameraButton: UIButton!
@@ -43,13 +44,6 @@ class NextViewController: UIViewController,UITableViewDelegate,UITableViewDataSo
             userImageData = UserDefaults.standard.object(forKey: "userImage") as! Data
             userImage = UIImage(data: userImageData)!
         }
-        
-//        //セルの高さを自動に設定する
-//        timeLineTableView.rowHeight = UITableView.automaticDimension
-//
-//        //デフォルトのセルの高さを設定する
-//        timeLineTableView.estimatedRowHeight = 10
-        
     }
     
 
@@ -98,5 +92,75 @@ class NextViewController: UIViewController,UITableViewDelegate,UITableViewDataSo
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
              return 605
     }
+    
+    //カメラを起動
+    func doCamera(){
+        let sourceType:UIImagePickerController.SourceType = .camera
+        //カメラが利用可能かチェックする
+        if UIImagePickerController.isSourceTypeAvailable(.camera){
+                let cameraPicker = UIImagePickerController()
+                cameraPicker.sourceType = sourceType
+                cameraPicker.delegate = self
+                cameraPicker.allowsEditing = true
+                present(cameraPicker, animated: true, completion: nil)
+            }
+        }
+    
+    //アルバムを起動
+    func doAlbum(){
+        let sourceType:UIImagePickerController.SourceType = .photoLibrary
+        //カメラが利用可能かチェックする
+        if UIImagePickerController.isSourceTypeAvailable(.photoLibrary){
+            let cameraPicker = UIImagePickerController()
+            cameraPicker.sourceType = sourceType
+            cameraPicker.delegate = self
+            cameraPicker.allowsEditing = true
+            present(cameraPicker, animated: true, completion: nil)
+        }
+    }
+    
+    //カメラ撮影orアルバムから画像選択された時に呼ばれる
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+            
+        selectedImage = info[.originalImage] as! UIImage
+                
+        //ナビゲーションを用いて画面遷移
+        let EditPostVC = self.storyboard?.instantiateViewController(identifier:"EditPostVC") as! EditAndPostViewController
+        EditPostVC.passedImage = selectedImage
+
+        //Showで表示する
+            self.navigationController?.pushViewController(EditPostVC, animated: true)
+        
+        //ピッカーを閉じる
+        picker.dismiss(animated: true, completion: nil)
+    }
+    
+    //アラートの表示
+    func showAlert(){
+        let alertController = UIAlertController(title: "選択", message: "どちらを使用しますか？", preferredStyle: .actionSheet)
+        let action1 = UIAlertAction(title: "カメラ", style: .default) { (alert) in
+            self.doCamera()
+        }
+        let action2 = UIAlertAction(title: "アルバム", style: .default) { (alert) in
+            self.doAlbum()
+        }
+        let action3 = UIAlertAction(title: "キャンセル", style: .cancel)
+        alertController.addAction(action1)
+        alertController.addAction(action2)
+        alertController.addAction(action3)
+        self.present(alertController,animated: true,completion: nil)
+    }
+    
+    //カメラの画面を閉じる
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true, completion: nil)
+    }
+    
+    @IBAction func cameraAction(_ sender: Any) {
+        showAlert()
+        
+    }
+    
+    
     
 }
