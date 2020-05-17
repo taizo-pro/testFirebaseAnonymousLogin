@@ -55,6 +55,7 @@ class InputViewController: UIViewController,UITextFieldDelegate,UIImagePickerCon
     
     @IBAction func imageViewTap(_ sender: Any) {
         
+        //フォアンとさせる
         let generator = UINotificationFeedbackGenerator()
         generator.notificationOccurred(.success)
         
