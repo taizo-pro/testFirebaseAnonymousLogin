@@ -25,29 +25,29 @@ class EditAndPostViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //アプリ内保存されている画像を取り出す
-        if UserDefaults.standard.object(forKey: "userImage") != nil {
-            profileImageData = UserDefaults.standard.object(forKey: "userImage") as! Data
-            //Data型からUIImage型に変更する
-            profileImage = UIImage(data: profileImageData)!
+            //アプリ内保存されている画像を取り出す
+            if UserDefaults.standard.object(forKey: "userImage") != nil {
+                profileImageData = UserDefaults.standard.object(forKey: "userImage") as! Data
+                //Data型からUIImage型に変更する
+                profileImage = UIImage(data: profileImageData)!
+            }
+            
+            //アプリ内保存されているユーザー名を取り出す
+            if UserDefaults.standard.object(forKey: "userName") != nil {
+                userName = UserDefaults.standard.object(forKey: "userName") as! String
+            }
+            
+            userProfileImageView.image = profileImage
+            userNameLabel.text = userName
+            contentImageView.image = passedImage
         }
         
-        //アプリ内保存されているユーザー名を取り出す
-        if UserDefaults.standard.object(forKey: "userName") != nil {
-            userName = UserDefaults.standard.object(forKey: "userName") as! String
+        override func viewWillAppear(_ animated: Bool) {
+            navigationController?.isNavigationBarHidden = true
         }
-        
-        userProfileImageView.image = profileImage
-        userNameLabel.text = userName
-        contentImageView.image = passedImage
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        navigationController?.isNavigationBarHidden = true
-    }
     
     @IBAction func postAction(_ sender: Any) {
     }
-    
+
     
 }
