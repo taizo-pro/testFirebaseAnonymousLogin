@@ -12,22 +12,42 @@ class EditAndPostViewController: UIViewController {
     
     //NextVCで持っていた、 selectedImage→passedImageに変換して、受け取る
     var passedImage = UIImage()
+    
+    var profileImageData = Data()
+    var profileImage = UIImage()
+    var userName = String()
 
+    @IBOutlet weak var userProfileImageView: UIImageView!
+    @IBOutlet weak var userNameLabel: UILabel!
+    @IBOutlet weak var contentImageView: UIImageView!
+    @IBOutlet weak var commentTextView: UITextView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        
+        //アプリ内保存されている画像を取り出す
+        if UserDefaults.standard.object(forKey: "userImage") != nil {
+            profileImageData = UserDefaults.standard.object(forKey: "userImage") as! Data
+            //Data型からUIImage型に変更する
+            profileImage = UIImage(data: profileImageData)!
+        }
+        
+        //アプリ内保存されているユーザー名を取り出す
+        if UserDefaults.standard.object(forKey: "userName") != nil {
+            userName = UserDefaults.standard.object(forKey: "userName") as! String
+        }
+        
+        userProfileImageView.image = profileImage
+        userNameLabel.text = userName
+        contentImageView.image = passedImage
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.isNavigationBarHidden = true
     }
-    */
-
+    
+    @IBAction func postAction(_ sender: Any) {
+    }
+    
+    
 }
