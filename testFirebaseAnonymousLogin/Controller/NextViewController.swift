@@ -9,6 +9,7 @@
 import UIKit
 import SDWebImage
 import Photos
+import Firebase
 
 class NextViewController: UIViewController,UITableViewDelegate,UITableViewDataSource,UIImagePickerControllerDelegate,UINavigationControllerDelegate {
 
@@ -161,6 +162,34 @@ class NextViewController: UIViewController,UITableViewDelegate,UITableViewDataSo
         
     }
     
+    //DBのデータを取得する
+    func fetchContentsData(){
+        //最新100件を取得する
+        let ref = Database.database().reference().child("timeLine").queryLimited(toLast: 100).queryOrdered(byChild: "postDate").observe(.value) { (snapShot) in
+            
+            self.contentsArray.removeAll()
+            if let snapShot = snapShot.children.allObjects as? [DataSnapshot]{
+                for snap in snapShot{
+                    if let postData = snap.value as? [String:Any]{
+                        let userName = postData["userName"] as? String
+                        let profileImage = postData["profileImage"] as? String
+                        let contentImage = postData["contentImage"] as? String
+                        let comment = postData["comment"] as? String
+                        var postDate:CLong?
+                        if let postedDate = postData["postDate"] as? CLong{
+                            postDate = postedDate
+                        }
+                        //postDateを時間に変換する
+                    }
+                }
+            }
+        }
+        
+        func convertTimeStamp(serverTimeStamp:CLong)->String{
+            
+        }
+        
+    }
     
     
 }

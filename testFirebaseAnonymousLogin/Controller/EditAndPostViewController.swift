@@ -76,7 +76,7 @@ class EditAndPostViewController: UIViewController {
                 print(error)
                 return
             }
-            let uploadTask2 = imageRef.putData(contentImageData, metadata: nil) { (metaData, error) in
+            let uploadTask2 = imageRef2.putData(contentImageData, metadata: nil) { (metaData, error) in
                 if error != nil {
                     print(error)
                     return
@@ -89,14 +89,19 @@ class EditAndPostViewController: UIViewController {
                             if url2 != nil {
                                 
                                 //Dictionary型でDBに送信するものを準備する
-                                let timeLineInfo = ["userName":self.userName as Any,]
+                                let timeLineInfo = ["userName":self.userName as Any,"ProfileImage":url?.absoluteString as Any,"contentImage":url2?.absoluteString as Any,"comment":self.commentTextView.text as Any,"postDate":ServerValue.timestamp()] as [String:Any]
+                                //Dictonary型でまとめたものをDBに送信する
+                                timeLineDB.updateChildValues(timeLineInfo)
+                                
+                                self .navigationController?.popViewController(animated: true)
                             }
                         }
                     }
                 }
+            }
         }
         
+        uploadTask.resume()
+        self.dismiss(animated: true, completion: nil)
     }
-
-    
 }
