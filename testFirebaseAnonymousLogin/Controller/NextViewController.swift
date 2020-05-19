@@ -29,6 +29,17 @@ class NextViewController: UIViewController,UITableViewDelegate,UITableViewDataSo
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //アルバムの許可画面
+        PHPhotoLibrary.requestAuthorization { (status) in
+            switch(status){
+            case.authorized:print("許可されています")
+            case.denied:print("拒否された")
+            case.notDetermined:print("notDetermined")
+            case.restricted:print("restricted")
+            }
+        }
+        
 
         timeLineTableView.delegate = self
         timeLineTableView.dataSource = self
@@ -45,6 +56,10 @@ class NextViewController: UIViewController,UITableViewDelegate,UITableViewDataSo
             userImageData = UserDefaults.standard.object(forKey: "userImage") as! Data
             userImage = UIImage(data: userImageData)!
         }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
     }
     
 
@@ -92,6 +107,27 @@ class NextViewController: UIViewController,UITableViewDelegate,UITableViewDataSo
     //セルの高さを決めるメソッド
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
              return 605
+    }
+    
+    //セルがタップされた時に呼ばれるメソッド
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        userName = contentsArray[indexPath.row].userNameString
+        userProfileImageString = contentsArray[indexPath.row].profileImage
+        contentImageString = contentsArray[indexPath.row].contentImageString
+        createData = contentsArray[indexPath.row].postDataString
+        commentString = contentsArray[indexPath.row].commentString
+        //画面遷移
+        performSegue(withIdentifier: "detail", sender: nil)
+    }
+    
+    //値を渡しながら画面遷移
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let detailVC = segue.destination as! DetailViewController
+        detailVC.userName = userName
+        detailVC.profileImage = userProfileImageString
+        detailVC.contentImage = contentImageString
+        detailVC.comment = commentString
+        detailVC.postDate = createData
     }
     
     //カメラを起動
@@ -180,16 +216,28 @@ class NextViewController: UIViewController,UITableViewDelegate,UITableViewDataSo
                             postDate = postedDate
                         }
                         //postDateを時間に変換する
+                        let timeString = self.convertTimeStamp(serverTimeStamp: postDate!)
+                        self.contentsArray.append(Contents(userNameString: userName!, profileImage: profileImage!, contentImageString: contentImage!, commentString: comment!, postDataString: timeString))
                     }
+                }
+                
+            self.timeLineTableView.reloadData()
+                let indexPath = IndexPath(row: self.contentsArray.count - 1, section: 0)
+                if self.contentsArray.count >= 5{
+                    self.timeLineTableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
                 }
             }
         }
-        
-        func convertTimeStamp(serverTimeStamp:CLong)->String{
-            
-        }
-        
     }
     
+    func convertTimeStamp(serverTimeStamp:CLong)->String{
+        let x = serverTimeStamp / 1000
+        let date = Date(timeIntervalSince1970: TimeInterval(x))
+        let formatter = DateFormatter()
+        formatter.dateStyle = .long
+        formatter.timeStyle = .medium
+        
+        return formatter.string(from: date)
+    }
     
 }
